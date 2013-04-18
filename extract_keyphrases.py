@@ -1,7 +1,9 @@
 import os
 import sys
+from source_document import DocumentObject
 import text_reading.twenty_newsgroups
 import nltk
+from wordrank_method import WordRankMethod
 
 STOP_LIST_ENG = nltk.corpus.stopwords.words('russian')
 GOOD_POSES = set(['NN', 'NNS', 'NNP', 'NNPS', 'JJ', 'JJR', 'JJS'])
@@ -25,13 +27,14 @@ def load_text_pipeline(in_file_name):
     return result_sentences
 
 def process_text(in_text_root):
-    loaded_texts = {}
     for root, dirs, files in os.walk(in_text_root, followlinks=True):
         for file_name in files:
             full_file_name = os.path.join(root, file_name)
-            loaded_texts[full_file_name] = load_text_pipeline(full_file_name)
-            print full_file_name
-            print loaded_texts[full_file_name]
+            sentences = text_reading.twenty_newsgroups.load_text(full_file_name)
+            sentences_join = [' '.join(sentence) for sentence in sentences]
+            doc = DocumentObject(sentences_join)
+            ranker = WordRankMethod()
+            ranker.printExtract(doc)
 
 
 
