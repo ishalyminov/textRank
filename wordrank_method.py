@@ -1,3 +1,4 @@
+import operator
 import rank_method
 import graph
 import vertex
@@ -34,3 +35,17 @@ class WordRankMethod(rank_method.RankMethod):
             denom += rank[sent.getOrdinalNumber()]
         for i in rank: rank[i] /= denom
         return rank
+
+    def rankWords(self, text, wsize = 3, threshold=0.0001):
+        TOP_SIZE = 10
+        self._graph = graph.GraphOfWords(wsize)
+        self._word2vert = {}
+        self._prepareGraph(text)
+        pr = pageRank.PageRank(self._graph.getVertices(), self._graph.getEdges())
+        while not pr.checkConvergence(threshold): pr.pageRankIteration()
+        ranked_words = []
+        for word in self._word2vert:
+            if self._use_stopwords and self._stopwords.isStopWord(word):
+                continue
+            ranked_words.append((word, self._word2vert[word].getScore()))
+        return sorted(ranked_words, key=operator.itemgetter(1), reverse=True)[:TOP_SIZE]

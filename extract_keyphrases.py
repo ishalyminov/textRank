@@ -5,7 +5,7 @@ import text_reading.twenty_newsgroups
 import nltk
 from wordrank_method import WordRankMethod
 
-STOP_LIST_ENG = nltk.corpus.stopwords.words('russian')
+STOP_LIST_ENG = nltk.corpus.stopwords.words('english')
 GOOD_POSES = set(['NN', 'NNS', 'NNP', 'NNPS', 'JJ', 'JJR', 'JJS'])
 
 def lower(in_sentence):
@@ -33,10 +33,11 @@ def process_text(in_text_root):
             sentences = text_reading.twenty_newsgroups.load_text(full_file_name)
             sentences_join = [' '.join(sentence) for sentence in sentences]
             doc = DocumentObject(sentences_join)
-            ranker = WordRankMethod()
-            ranker.printExtract(doc)
-
-
+            ranker = WordRankMethod(stopWordsData=STOP_LIST_ENG)
+            print full_file_name + '\n\n\n'
+            for top_word in ranker.rankWords(doc):
+                print '%s --> %s' % (top_word[0], str(top_word[1]))
+            exit(0)
 
 if __name__ == '__main__':
     if len(sys.argv) < 2:

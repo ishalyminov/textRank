@@ -5,9 +5,12 @@ import codecs
 
 class StopWords(object):
 
-    def __init__(self, fileName):
-        self.setSourceFile(fileName)
-        
+    def __init__(self, data):
+        if isinstance(data, list):
+            self._loadDirectly(data)
+        else:
+            self.setSourceFile(data)
+
     def setSourceFile(self, fileName):
         self._sourceFile = fileName
         self._stopwords = []
@@ -16,7 +19,12 @@ class StopWords(object):
         s = codecs.open(self._sourceFile, mode = 'r', encoding='utf8')
         for word in s:
             self._stopwords.append(word.strip())
-        
+
+    def _loadDirectly(self, inData):
+        self._stopwords = []
+        for word in inData:
+            self._stopwords.append(word.decode('utf-8'))
+
     def isStopWord(self, word):
         '''
         returns True if word is on the stopwords list
